@@ -127,17 +127,41 @@ public static class WishlistConstant {
 
 ### 8. Dependency Injection
 
-- Использование атрибутов для внедрения зависимостей
+- Приоритет использования атрибутов для DI
+- Модули создаются только в крайних случаях
 - Четкое определение жизненного цикла сервисов
+
 ```csharp
-[Inject]
-public WishlistService(
-    WishlistOperationService wishlistOperationService,
-    WishlistDispatcher wishlistDispatcher,
-    WishlistRepo wishlistRepo) {
-    // Инициализация
+// Предпочтительный способ - через атрибуты
+[Service]
+public class WishlistService {
+    [Inject]
+    private readonly IWishlistRepo _repo;
+    
+    [Inject]
+    public WishlistService(
+        WishlistOperationService operationService,
+        WishlistDispatcher dispatcher) {
+        // Инициализация
+    }
+}
+
+// Использовать модули только когда действительно необходимо
+// Например, для сложной конфигурации или условной регистрации сервисов
+[Module]
+public class WishlistModule : IModule {
+    public void Configure() {
+        // Сложная конфигурация
+    }
 }
 ```
+
+Рекомендации по DI:
+- ✅ Используйте атрибуты [Service], [Repository], [Presenter]
+- ✅ Внедряйте зависимости через конструктор или поля с [Inject]
+- ✅ Определяйте явно Scope сервиса где необходимо
+- ❌ Не создавайте модули без явной необходимости
+- ❌ Избегайте Service Locator pattern
 
 ## Рекомендации
 
